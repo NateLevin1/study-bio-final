@@ -116,14 +116,45 @@ function App() {
                     <Question
                         description={description}
                         answers={answers}
-                        questionNumber={questionNumber}
+                        questionNumber={modifiedQuestionNumber}
                         onNextQuestion={() => newQuestion()}
                         id={questionId}
                     />
                     <div className="my-4 flex flex-col items-center w-full">
                         <p className="block">
-                            Question {modifiedQuestionNumber} /{" "}
-                            {questionBank.getTotalQuestionCount()}
+                            Question{" "}
+                            <input
+                                type="number"
+                                style={
+                                    {
+                                        "--min-width":
+                                            modifiedQuestionNumber.toString()
+                                                .length + "ch",
+                                        width: "var(--min-width)",
+                                    } as React.CSSProperties
+                                }
+                                className="hover:!w-[max(2rem,_var(--min-width))] focus:!w-[max(2rem,_var(--min-width))] text-center bg-none transition-all no-numbers"
+                                value={modifiedQuestionNumber}
+                                onChange={(ev) => {
+                                    const num = parseInt(ev.target.value);
+                                    setQuestionNumber(num);
+                                    if (
+                                        !isNaN(num) &&
+                                        num > 0 &&
+                                        num <=
+                                            questionBank.getTotalQuestionCount()
+                                    ) {
+                                        const question =
+                                            questionBank.loadQuestion(num)!;
+                                        const { description, answers, id } =
+                                            question;
+                                        setDescription(description);
+                                        setAnswers(answers);
+                                        setQuestionId(id);
+                                    }
+                                }}
+                            ></input>{" "}
+                            / {questionBank.getTotalQuestionCount()}
                         </p>
                         <progress
                             max={questionBank.getTotalQuestionCount()}
