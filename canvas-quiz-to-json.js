@@ -12,7 +12,7 @@
         const questionText = question
             .querySelector(".text")
             .querySelector(":scope > .question_text")
-            .textContent.trim();
+            .innerHTML.trim();
         const questionImages = Array.from(
             question
                 .querySelector(".text")
@@ -87,7 +87,10 @@
     }
     console.log(output);
     const outputString = JSON.stringify(output);
-    document.body.innerHTML = `<h1>Click anywhere to copy questions to clipboard</h1> <pre>${outputString}</pre>`;
+    document.body.innerHTML = `<h1>Click anywhere to copy questions to clipboard</h1> <pre>${outputString.replaceAll(
+        "<",
+        "&lt;"
+    )}</pre>`;
     document.body.onclick = async () => {
         await navigator.clipboard.writeText(outputString);
         document.body.innerHTML = `<h1>Copied to clipboard!</h1>`;

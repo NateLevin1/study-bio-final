@@ -29,6 +29,10 @@ input.no-numbers {
     -moz-appearance: textfield;
 }
 
+.text-right {
+    text-align: right;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

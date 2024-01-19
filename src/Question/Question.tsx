@@ -77,34 +77,42 @@ function Question(
     };
 
     return (
-        <div className="w-[40rem] border pb-4 text-lg mt-6">
-            <div className="font-bold px-3 m-0 py-3 w-full bg-slate-50 border-b flex items-center justify-between">
+        <div className="w-[40rem] border pb-4 text-base mt-6 rounded-lg">
+            <div className="font-bold px-3 m-0 py-3 w-full bg-slate-50 border-b flex items-center justify-between rounded-t-lg">
                 <h2 onDoubleClick={() => setManuallyEditing(!manuallyEditing)}>
                     Question {questionNumber}
                 </h2>
-                <svg
-                    className={`cursor-pointer hover:text-amber-400 transition-colors ${
-                        starred ? "text-amber-400 hover:text-red-400" : ""
-                    }`}
-                    viewBox="0 0 20 20"
-                    height="20"
-                    width="20"
-                    onClick={() => {
-                        if (starred) {
-                            setStarred(false);
-                            removeStar(id);
-                        } else {
-                            setStarred(true);
-                            addStar(id);
-                        }
-                        questionBank.updateStarred();
-                    }}
-                >
-                    <path
-                        fill="currentColor"
-                        d="M10 16.0745L14.3649 18.8368C15.1642 19.343 16.1424 18.5947 15.932 17.6482L14.7751 12.4537L18.6351 8.95405C19.3398 8.31575 18.9611 7.10517 18.0356 7.02813L12.9555 6.57692L10.9676 1.66857C10.61 0.777143 9.38997 0.777143 9.03237 1.66857L7.04451 6.56591L1.96443 7.01713C1.03887 7.09416 0.660232 8.30474 1.36492 8.94305L5.22494 12.4427L4.06799 17.6372C3.85763 18.5837 4.83578 19.332 5.63513 18.8258L10 16.0745V16.0745Z"
-                    ></path>
-                </svg>
+                <div className="flex gap-5 h-[20px] items-center">
+                    <button
+                        className="text-gray-500 relative top-[1px]"
+                        onClick={() => onNextQuestion()}
+                    >
+                        Skip
+                    </button>
+                    <svg
+                        className={`cursor-pointer hover:text-amber-400 transition-colors ${
+                            starred ? "text-amber-400 hover:text-red-400" : ""
+                        }`}
+                        viewBox="0 0 20 20"
+                        height="20"
+                        width="20"
+                        onClick={() => {
+                            if (starred) {
+                                setStarred(false);
+                                removeStar(id);
+                            } else {
+                                setStarred(true);
+                                addStar(id);
+                            }
+                            questionBank.updateStarred();
+                        }}
+                    >
+                        <path
+                            fill="currentColor"
+                            d="M10 16.0745L14.3649 18.8368C15.1642 19.343 16.1424 18.5947 15.932 17.6482L14.7751 12.4537L18.6351 8.95405C19.3398 8.31575 18.9611 7.10517 18.0356 7.02813L12.9555 6.57692L10.9676 1.66857C10.61 0.777143 9.38997 0.777143 9.03237 1.66857L7.04451 6.56591L1.96443 7.01713C1.03887 7.09416 0.660232 8.30474 1.36492 8.94305L5.22494 12.4427L4.06799 17.6372C3.85763 18.5837 4.83578 19.332 5.63513 18.8258L10 16.0745V16.0745Z"
+                        ></path>
+                    </svg>
+                </div>
             </div>
             {images.map((url) => (
                 <img
@@ -114,7 +122,10 @@ function Question(
                     alt="Question"
                 />
             ))}
-            <p className="ml-6 my-6">{text}</p>
+            <div
+                className="px-6 py-6"
+                dangerouslySetInnerHTML={{ __html: text }}
+            ></div>
             <div className="ml-6" ref={answersRef}>
                 {answers.map((answer, index) => (
                     <div
@@ -141,7 +152,11 @@ function Question(
 
             {editing ? (
                 <div className="text-center my-4">
-                    <p className="font-bold text-lg">No Correct Answer</p>
+                    <p className="font-bold text-lg">
+                        <span className="bg-amber-100 px-2">
+                            No Correct Answer
+                        </span>
+                    </p>
                     <div className="text-sm">
                         <p>This question has no correct answer yet.</p>
                         <p>
