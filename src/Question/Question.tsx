@@ -18,6 +18,7 @@ function Question(
     props: QuestionT & {
         questionNumber: number;
         onNextQuestion: () => void;
+        addEdit: (edit: string) => void;
     }
 ) {
     const {
@@ -25,6 +26,7 @@ function Question(
         answers,
         questionNumber,
         onNextQuestion,
+        addEdit,
         id,
     } = props;
 
@@ -33,7 +35,11 @@ function Question(
     const [correctShown, setCorrectShown] = useState(false);
     const [answer, setAnswer] = useState<number | null>(null);
     const [skipCorrectShown, setSkipCorrectShown] = useState(false);
+    const [manuallyEditing, setManuallyEditing] = useState(false);
     const answersRef = useRef<HTMLDivElement>(null);
+
+    const correctAnswerIndex = answers.findIndex((a) => a.correct);
+    const editing = correctAnswerIndex === -1 || manuallyEditing;
 
     useEffect(() => {
         setStarred(isStarred(id));
@@ -55,6 +61,12 @@ function Question(
     };
 
     const onSubmitOrNext = (event: MouseEvent) => {
+        if (editing) {
+            addEdit(JSON.stringify({ id, answer }) + ",\n");
+            onNextQuestion();
+            return;
+        }
+
         if (!correctShown && (skipCorrectShown ? !isCorrect : true)) {
             setCorrectShown(true);
         } else {
@@ -67,7 +79,9 @@ function Question(
     return (
         <div className="w-[40rem] border pb-4 text-lg mt-6">
             <div className="font-bold px-3 m-0 py-3 w-full bg-slate-50 border-b flex items-center justify-between">
-                <h2>Question {questionNumber}</h2>
+                <h2 onDoubleClick={() => setManuallyEditing(!manuallyEditing)}>
+                    Question {questionNumber}
+                </h2>
                 <svg
                     className={`cursor-pointer hover:text-amber-400 transition-colors ${
                         starred ? "text-amber-400 hover:text-red-400" : ""
@@ -125,6 +139,18 @@ function Question(
                 ))}
             </div>
 
+            {editing ? (
+                <div className="text-center my-4">
+                    <p className="font-bold text-lg">No Correct Answer</p>
+                    <div className="text-sm">
+                        <p>This question has no correct answer yet.</p>
+                        <p>
+                            Please find the correct answer and submit it above.
+                        </p>
+                    </div>
+                </div>
+            ) : null}
+
             {correctShown ? (
                 <div className="text-center my-4">
                     <p className="font-bold text-xl">
@@ -135,9 +161,9 @@ function Question(
                     {!isCorrect ? (
                         <p className="my-4">
                             The correct answer was option{" "}
-                            {answers.findIndex((a) => a.correct) + 1}:
+                            {correctAnswerIndex + 1}:
                             <span className="block font-semibold">
-                                "{answers.filter((a) => a.correct)[0].text}"
+                                "{answers[correctAnswerIndex].text}"
                             </span>
                             {!starred && (
                                 <button

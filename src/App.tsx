@@ -5,26 +5,20 @@ import { useOnMount } from "./utils";
 import allQuestions from "./questions.json";
 
 function App() {
-    const [description, setDescription] = useState<
-        QuestionT["description"] | null
-    >(null);
-    const [answers, setAnswers] = useState<QuestionT["answers"] | null>(null);
-    const [questionId, setQuestionId] = useState<QuestionT["id"] | null>(null);
+    const [question, setQuestion] = useState<QuestionT | null>(null);
     const [questionNumber, setQuestionNumber] = useState(0);
     const modifiedQuestionNumber =
         ((questionNumber - 1) % questionBank.getTotalQuestionCount()) + 1;
+    const [edits, setEdits] = useState("");
 
     const newQuestion = () => {
         const question = questionBank.nextQuestion();
         if (!question) {
-            setDescription(null);
+            setQuestion(null);
             return;
         }
 
-        const { description, answers, id } = question;
-        setDescription(description);
-        setAnswers(answers);
-        setQuestionId(id);
+        setQuestion(question);
         setQuestionNumber(questionNumber + 1);
     };
 
@@ -111,14 +105,15 @@ function App() {
                 </label>
             </div>
 
-            {description && answers && questionId ? (
+            {question ? (
                 <>
                     <Question
-                        description={description}
-                        answers={answers}
+                        description={question.description}
+                        answers={question.answers}
                         questionNumber={modifiedQuestionNumber}
                         onNextQuestion={() => newQuestion()}
-                        id={questionId}
+                        addEdit={(edit) => setEdits(edits + edit)}
+                        id={question.id}
                     />
                     <div className="my-4 flex flex-col items-center w-full">
                         <p className="block">
@@ -146,11 +141,7 @@ function App() {
                                     ) {
                                         const question =
                                             questionBank.loadQuestion(num)!;
-                                        const { description, answers, id } =
-                                            question;
-                                        setDescription(description);
-                                        setAnswers(answers);
-                                        setQuestionId(id);
+                                        setQuestion(question);
                                     }
                                 }}
                             ></input>{" "}
@@ -169,6 +160,25 @@ function App() {
                     No questions available with these settings!
                 </p>
             )}
+            {edits ? (
+                <div className="grid gap-2 mt-4">
+                    <h2 className="font-bold">Edits</h2>
+                    <p className="text-sm max-w-sm">
+                        Click below to copy the list of edits below. Then, send
+                        them to the creator of this study resource to let them
+                        add in the correct answers.
+                    </p>
+                    <p
+                        className="bg-gray-100 rounded p-1 px-1.5 h-16 overflow-y-auto select-all whitespace-pre max-w-sm"
+                        onClick={async () => {
+                            await navigator.clipboard.writeText(edits);
+                            alert("Copied edits to clipboard!");
+                        }}
+                    >
+                        {edits}
+                    </p>
+                </div>
+            ) : null}
         </div>
     );
 }
