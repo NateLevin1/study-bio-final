@@ -128,25 +128,24 @@ function Question(
             ></div>
             <div className="ml-6" ref={answersRef}>
                 {answers.map((answer, index) => (
-                    <div
+                    <label
                         key={answer.text + index}
-                        className="border-t w-11/12 pl-6 py-1 flex items-center"
+                        className="border-t w-11/12 pl-6 py-2 block"
                     >
-                        <input
-                            type="radio"
-                            name="answers"
-                            value={index}
-                            id={answer.text}
-                            className="cursor-pointer"
-                            onChange={onAnswerChange}
-                        ></input>
-                        <label
-                            htmlFor={answer.text}
-                            className="ml-2 cursor-pointer flex-grow"
-                        >
-                            {answer.text}
-                        </label>
-                    </div>
+                        <div className="relative pl-5">
+                            <input
+                                type="radio"
+                                name="answers"
+                                value={index}
+                                id={answer.text}
+                                className="cursor-pointer absolute top-1.5 left-0"
+                                onChange={onAnswerChange}
+                            ></input>
+                            <span className="cursor-pointer">
+                                {answer.text}
+                            </span>
+                        </div>
+                    </label>
                 ))}
             </div>
 
